@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  frontend:
+    build: frontend
+    image: kmkale/compose-ecs-frontend
+    ports:
+      - 80:80
+    stdin_open: true
+    tty: true
+    # volumes:
+    #   - ./frontend:/usr/src/app
+    #   - /usr/src/app/node_modules
+    container_name: frontend
+    restart: always
+    networks:
+      - react-express
+    depends_on:
+      - backend
+
+  backend:
+    container_name: backend
+    restart: always
+    build: backend
+    image: kmkale/compose-ecs-backend
+    # volumes:
+    #   - ./backend:/usr/src/app
+    #   - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - express-mongo
+      - react-express
+
+  mongo:
+    container_name: mongo
+    restart: always
+    image: mongo:4.2.0
+    volumes:
+      - ./data:/data/db
+    networks:
+      - express-mongo
+networks:
+  react-express:
+  express-mongo:
